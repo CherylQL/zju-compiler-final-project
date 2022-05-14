@@ -5,7 +5,6 @@ from random import randint
 import llvmlite.binding as llvm
 from llvmlite import ir
 
-# from parse import parser
 from parse import parser
 from CompilerError import *
 from TypeDict import TYPE as type_t
@@ -35,14 +34,12 @@ class IntCodeGen:
         self.module = ir.Module(self.AstRoot.children[0].children[1].name)
         self._codegen(self.AstRoot)
         ret = self.module.__repr__()
-        #TODO: cfg_graph_generate
+        #TODO: cfgGraphGenerator检查
         self.cfgGraphGenerator()
         return ret
 
     def _codegen(self, n):
         func = n.type
-        if(func == 'term'):
-            print(getattr(self, func)(n))
         return getattr(self, func)(n)
 
     def cfgGraphGenerator(self, flush=True, show=False, root_p="./cfgPic/"):
@@ -552,7 +549,6 @@ class IntCodeGen:
     def for_stmt(self, node):
         ran = str(randint(0, 0x7FFFFFFF))
         self.SymbolTable.initial()
-        print(node.children)
         addr = self.builder.alloca(ir.IntType(32))
         init_value = self.expression(node.children[3])
         self.SymbolTable.insert([node.children[1].name, addr])
@@ -776,8 +772,6 @@ class IntCodeGen:
                 name = node.children[0].name
                 lhs = self.SymbolTable.find(name)['entry']
                 index = self.expression(node.children[2])
-                print(node.children[2])
-                print(index)
                 i32 = ir.IntType(32)
                 i32_0 = ir.Constant(i32, 0)
                 pointer_to_index = self.builder.gep(lhs, [i32_0, index])  # gets address of array[0]
@@ -791,7 +785,7 @@ class IntCodeGen:
         current = [self._codegen(node.children[-1])]
         return pre_list + current
 
-    def IDENTIFIER(self, node):
+    def ID(self, node):
         name = node.name
         addr = self.SymbolTable.find(name)['entry']
         if type(addr) != ir.Function:

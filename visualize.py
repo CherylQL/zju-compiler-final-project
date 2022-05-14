@@ -1,6 +1,4 @@
 from graphviz import Digraph
-from random import randint
-
 
 class Stack:
     def __init__(self, root=None):

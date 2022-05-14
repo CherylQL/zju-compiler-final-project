@@ -34,9 +34,9 @@ sym = ('SYM_ADD', 'SYM_SUB', 'SYM_MUL', 'SYM_DIV', 'SYM_EQ', 'SYM_LT', 'SYM_GT',
        'SYM_GE', 'SYM_ASSIGN', 'SYM_RANGE', 'COMMENT')
 
 # token
-tokens = list(sym) + list(set(reserved.values())) + \
-    ['ID', 'INT', 'REAL', 'CHAR', 'STR']
-
+tokens = list(sym) + list(set(reserved.values())) + [
+        'ID', 'INT', 'REAL', 'CHAR', 'STR'
+    ]
 
 t_SYM_ADD = re.escape(r'+')
 t_SYM_SUB = re.escape(r'-')

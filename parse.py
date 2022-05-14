@@ -165,7 +165,7 @@ def p_simple_type_decl_0(p):
 
 def p_simple_type_decl_1(p):
     'simple_type_decl : ID'
-    p[0] = Node("simple_type_decl", [Node("IDENTIFIER", [],  p[1])])
+    p[0] = Node("simple_type_decl", [Node("ID", [],  p[1])])
 
 
 def p_simple_type_decl_2(p):

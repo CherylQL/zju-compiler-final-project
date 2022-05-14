@@ -89,8 +89,8 @@ def p_const_expr_list_3(p):
 
 
 def p_const_value_0(p):
-    'const_value : INT'
-    p[0] = Node("const_value", [Node("INT", [], p[1])])
+    'const_value : UNSIGNEDINTEGER'
+    p[0] = Node("const_value", [Node("UNSIGNEDINTEGER", [], p[1])])
 
 
 def p_const_value_1(p):
@@ -385,8 +385,8 @@ def p_stmt_list_1(p):
 
 
 def p_stmt_0(p):
-    'stmt : INT SYM_COLON unlabelled_stmt'
-    p[0] = Node("stmt", [Node("INT", [], p[1]), Node("SYM_COLON", []), p[3]])
+    'stmt : UNSIGNEDINTEGER SYM_COLON unlabelled_stmt'
+    p[0] = Node("stmt", [Node("UNSIGNEDINTEGER", [], p[1]), Node("SYM_COLON", []), p[3]])
 
 
 def p_stmt_1(p):
@@ -557,8 +557,8 @@ def p_case_expr_2(p):
 
 
 def p_goto_stmt(p):
-    'goto_stmt : GOTO INT'
-    p[0] = Node("goto_stmt", [Node("GOTO", []), Node("INT", [], p[2])])
+    'goto_stmt : GOTO UNSIGNEDINTEGER'
+    p[0] = Node("goto_stmt", [Node("GOTO", []), Node("UNSIGNEDINTEGER", [], p[2])])
 
 
 def p_expression_list_0(p):

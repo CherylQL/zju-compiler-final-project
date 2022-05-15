@@ -1,0 +1,5 @@
+digraph "CFG for 'main' function" {
+	label="CFG for 'main' function";
+
+	Node0x2718e783d00 [shape=record,label="{main:\l  store i32 6, i32* @x, align 4\l  %.6 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1)\l... getelementptr inbounds ([11 x i8], [11 x i8]* @fmt7173912, i64 0, i64 0), i32\l... 6)\l  ret void\l}"];
+}

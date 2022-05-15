@@ -4,6 +4,7 @@ var
 
 function f(b : integer): integer;
 var
+    i : integer;
     tmp : integer;
 begin
     tmp := 1;

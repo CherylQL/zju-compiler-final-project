@@ -9,9 +9,7 @@ class Node:
     def __init__(self, type, children, name=""):
         self.type = type
         self.children = children
-        self.name = name  # 叶子节点才有自己的name(一般是id,也可以为所有的叶子结点都赋name(可改))
-        # 为什么需要arg_list??
-        self.arg_list = []  # [ name, type ]
+        self.name = name  # 叶子节点才有自己的name
 
     def __repr__(self):  # 重写print用于调试
         return "(%s/%s)" % (self.type, self.name if self.name != "" else "NoName")

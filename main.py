@@ -65,7 +65,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
         print(int_code)
         #TODO: 生成目标代码
         func_name = []
-        for func in self.IntermediateCode.FuncList:
+        for func in self.IntermediateRepresentation.FuncList:
             func_name.append(func.name)
 
         self.TargetCode.getIntCode(int_code)
@@ -85,6 +85,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         return asm_code
 
     def Run(self):
+        self.SC_P.setText(self.SC_P.text() + '\Test\TestCase3.pas')
+        print(self.SC_P.text())
         asm_code = self.Compile()
 
         #TODO: set program name according to asm file name
@@ -126,14 +128,12 @@ class MainForm(QMainWindow, Ui_MainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    print("main")
     mainForm = MainForm()
 
-    # f = open('./Test/TestCase3.pas', 'r', encoding='utf-8')
-    # mainForm.SourceCode = f.read()
-    # f.close()
-    # mainForm.Compile()
-    # print(mainForm.ASM)
+    f = open('./Test/TestCase3.pas', 'r', encoding='utf-8')
+    mainForm.SourceCode = f.read()
+    f.close()
+    mainForm.Run()
 
-    mainForm.show()
-    sys.exit(app.exec_())
+    # mainForm.show()
+    # sys.exit(app.exec_())

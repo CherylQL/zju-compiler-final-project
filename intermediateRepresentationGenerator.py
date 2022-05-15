@@ -83,7 +83,6 @@ class IntRepGen:
             return
 
     def const_expr_list(self, node):
-        print("const_expr_list")
         arg_array = node.children[-4:]
         st_name = arg_array[0].name
         con_value = self.triggerFuncByName(arg_array[2])
@@ -124,7 +123,6 @@ class IntRepGen:
             return ret
 
     def routine(self, n):
-        print("routine")
         for i in range(len(n.children)):
             self.triggerFuncByName(n.children[i])
 
@@ -141,12 +139,10 @@ class IntRepGen:
             self.triggerFuncByName(n.children[i])
 
     def type_part(self, n):
-        print("type part")
         l = len(n.children)
         self.triggerFuncByName(n.children[l - 1])
 
     def type_decl(self, node):
-        print("type decl")
         tp = node.children[0].type
         if tp == "simple_type_decl":
             return self.simple_type_decl(node.children[0])
@@ -176,7 +172,6 @@ class IntRepGen:
             self.triggerFuncByName(n.children[i])
 
     def type_def(self, node):
-        print("type def")
         n = node.children[0].name
         tp = node.children[2].children[0].type
         if tp == "record_type_decl":
@@ -206,8 +201,6 @@ class IntRepGen:
             self.triggerFuncByName(n.children[i])
 
     def var_decl(self, node):
-
-        print("var decl")
         node_array = self.name_list(node.children[0])
 
         if node.children[2].children[0].type == "simple_type_decl":
@@ -278,7 +271,6 @@ class IntRepGen:
         return ty_array
 
     def procedure_decl(self, node):
-        print("procedure decl")
         name, arg_array = self.procedure_head(node.children[0])
         name_array, irtp_array = list(), list()
         for t in arg_array:
@@ -332,8 +324,6 @@ class IntRepGen:
         self.stmt_list(node.children[1])
 
     def func_decl(self, node):
-        print("func_decl:")
-        print(node.children)
         name, arg_array, ret = self.func_head(node.children[0])
         name_array = list()
         irtp_array = list()
@@ -373,7 +363,6 @@ class IntRepGen:
         self.SymbolTable.SymTables.pop()
 
     def stmt(self, node):
-        print("stmt")
         self.triggerFuncByName(node.children[-1])
 
     def unlabelled_stmt(self, node):

@@ -11,7 +11,7 @@ from TypeDict import TYPE as type_t
 from TypeDict import IRTYPE as ir_type_t
 from symbolTable import SymbolTable
 
-class IntCodeGen:
+class IntRepGen:
 
     def __init__(self, astRoot = ""):
         self.AstRoot = astRoot
@@ -30,15 +30,16 @@ class IntCodeGen:
         self.default = None
 
     def Generation(self):
-        #TODO: AstRoot为null的错误处理
+        if (self.AstRoot == None):
+            raise TreeContentException(["Abstract syntax tree content is invalid: %s" % (self.AstRoot)])
         self.module = ir.Module(self.AstRoot.children[0].children[1].name)
-        self._codegen(self.AstRoot)
+        self.triggerFuncByName(self.AstRoot)
         ret = self.module.__repr__()
         #TODO: cfgGraphGenerator检查
         self.cfgGraphGenerator()
         return ret
 
-    def _codegen(self, n):
+    def triggerFuncByName(self, n):
         func = n.type
         return getattr(self, func)(n)
 
@@ -53,7 +54,7 @@ class IntCodeGen:
             dot.render(filepath, view=show)
 
     def irshow(self):
-        self._codegen(self.AstRoot)
+        self.triggerFuncByName(self.AstRoot)
         return self.module
 
     def program(self, node):
@@ -66,7 +67,7 @@ class IntCodeGen:
         self.FuncList.append(self.main_func)
 
         self.builder = ir.IRBuilder(self.block)
-        self._codegen(node.children[1])
+        self.triggerFuncByName(node.children[1])
         self.builder.ret_void()
 
     def info(self, node):
@@ -77,14 +78,15 @@ class IntCodeGen:
 
     def const_part(self, node):
         if len(node.children) >= 2:
-            self._codegen(node.children[1])
+            self.triggerFuncByName(node.children[1])
         else:
             return
 
     def const_expr_list(self, node):
+        print("const_expr_list")
         arg_array = node.children[-4:]
         st_name = arg_array[0].name
-        con_value = self._codegen(arg_array[2])
+        con_value = self.triggerFuncByName(arg_array[2])
         if len(self.SymbolTable.SymTables) <= 1:
             addr = ir.GlobalVariable(self.module, con_value.type, st_name)
             try:
@@ -104,7 +106,7 @@ class IntCodeGen:
         if len(node.children) != 5:
             pass
         else:
-            self._codegen(node.children[0])
+            self.triggerFuncByName(node.children[0])
 
     def const_value(self, node):
         n_type = node.children[0].type
@@ -122,26 +124,29 @@ class IntCodeGen:
             return ret
 
     def routine(self, n):
+        print("routine")
         for i in range(len(n.children)):
-            self._codegen(n.children[i])
+            self.triggerFuncByName(n.children[i])
 
     def routine_part(self, n):
         for i in range(len(n.children)):
-            self._codegen(n.children[i])
+            self.triggerFuncByName(n.children[i])
 
     def routine_head(self, n):
         for i in range(len(n.children)):
-            self._codegen(n.children[i])
+            self.triggerFuncByName(n.children[i])
 
     def subroutine(self, n):
         for i in range(len(n.children)):
-            self._codegen(n.children[i])
+            self.triggerFuncByName(n.children[i])
 
     def type_part(self, n):
+        print("type part")
         l = len(n.children)
-        self._codegen(n.children[l - 1])
+        self.triggerFuncByName(n.children[l - 1])
 
     def type_decl(self, node):
+        print("type decl")
         tp = node.children[0].type
         if tp == "simple_type_decl":
             return self.simple_type_decl(node.children[0])
@@ -168,9 +173,10 @@ class IntCodeGen:
 
     def type_decl_list(self, n):
         for i in range(len(n.children)):
-            self._codegen(n.children[i])
+            self.triggerFuncByName(n.children[i])
 
     def type_def(self, node):
+        print("type def")
         n = node.children[0].name
         tp = node.children[2].children[0].type
         if tp == "record_type_decl":
@@ -193,13 +199,15 @@ class IntCodeGen:
 
     def var_part(self, n):
         l = len(n.children)
-        self._codegen(n.children[l - 1])
+        self.triggerFuncByName(n.children[l - 1])
 
     def var_decl_list(self, n):
         for i in range(len(n.children)):
-            self._codegen(n.children[i])
+            self.triggerFuncByName(n.children[i])
 
     def var_decl(self, node):
+
+        print("var decl")
         node_array = self.name_list(node.children[0])
 
         if node.children[2].children[0].type == "simple_type_decl":
@@ -253,12 +261,12 @@ class IntCodeGen:
         return name_array + n
 
     def record_type_decl(self, node):
-        return ["record", self._codegen(node.children[1])]
+        return ["record", self.triggerFuncByName(node.children[1])]
 
     def field_decl_list(self, n):
         ty_array = list()
         for i in range(len(n.children)):
-            ty_array += self._codegen(n.children[i])
+            ty_array += self.triggerFuncByName(n.children[i])
         return ty_array
 
     def field_decl(self, node):
@@ -270,6 +278,7 @@ class IntCodeGen:
         return ty_array
 
     def procedure_decl(self, node):
+        print("procedure decl")
         name, arg_array = self.procedure_head(node.children[0])
         name_array, irtp_array = list(), list()
         for t in arg_array:
@@ -306,15 +315,15 @@ class IntCodeGen:
         self.SymbolTable.SymTables.pop()
 
     def procedure_head(self, node):
-        arg_array = self._codegen(node.children[2])
+        arg_array = self.triggerFuncByName(node.children[2])
         n = node.children[1].name
         return n, arg_array
 
     def val_para_list(self, node):
-        return self._codegen(node.children[0])
+        return self.triggerFuncByName(node.children[0])
 
     def var_para_list(self, node):
-        return self._codegen(node.children[1])
+        return self.triggerFuncByName(node.children[1])
 
     def routine_body(self, node):
         self.compound_stmt(node.children[0])
@@ -323,6 +332,8 @@ class IntCodeGen:
         self.stmt_list(node.children[1])
 
     def func_decl(self, node):
+        print("func_decl:")
+        print(node.children)
         name, arg_array, ret = self.func_head(node.children[0])
         name_array = list()
         irtp_array = list()
@@ -362,25 +373,26 @@ class IntCodeGen:
         self.SymbolTable.SymTables.pop()
 
     def stmt(self, node):
-        self._codegen(node.children[-1])
+        print("stmt")
+        self.triggerFuncByName(node.children[-1])
 
     def unlabelled_stmt(self, node):
-        self._codegen(node.children[0])
+        self.triggerFuncByName(node.children[0])
 
     def stmt_list(self, node):
         if len(node.children) <= 1:
             self.epsilon(node.children[0])
         else:
-            self._codegen(node.children[0])
-            self._codegen(node.children[1])
+            self.triggerFuncByName(node.children[0])
+            self.triggerFuncByName(node.children[1])
 
     def parameters(self, node):
-        return self._codegen(node.children[1])
+        return self.triggerFuncByName(node.children[1])
 
     def func_head(self, node):
         name = node.children[1].name
-        arg_array = self._codegen(node.children[2])
-        ret = self._codegen(node.children[4])
+        arg_array = self.triggerFuncByName(node.children[2])
+        ret = self.triggerFuncByName(node.children[4])
         return name, arg_array, ret
 
     def assign_stmt(self, node):
@@ -430,8 +442,8 @@ class IntCodeGen:
         return arg_array
 
     def para_type_list(self, node):
-        paraname_list = self._codegen(node.children[0])
-        ir_type = self._codegen(node.children[-1])
+        paraname_list = self.triggerFuncByName(node.children[0])
+        ir_type = self.triggerFuncByName(node.children[-1])
         tp = node.children[0].type
         if tp == "var_para_list":
             paraname_list.insert(0, "var")
@@ -533,16 +545,16 @@ class IntCodeGen:
             'entry']
 
     def if_stmt(self, node):
-        pred = self._codegen(node.children[1])
+        pred = self.triggerFuncByName(node.children[1])
         with self.builder.if_else(pred) as (then, otherwise):
             with then:
-                self._codegen(node.children[3])
+                self.triggerFuncByName(node.children[3])
             with otherwise:
-                self._codegen(node.children[4])
+                self.triggerFuncByName(node.children[4])
 
     def else_clause(self, node):
         if len(node.children) > 1:
-            self._codegen(node.children[-1])
+            self.triggerFuncByName(node.children[-1])
         else:
             return
 
@@ -570,7 +582,7 @@ class IntCodeGen:
         stmt_builder = ir.IRBuilder(stmt_block)
         stored_builder = self.builder
         self.builder = stmt_builder
-        self._codegen(node.children[-1])
+        self.triggerFuncByName(node.children[-1])
         self.builder = stored_builder
         one = ir.IntType(32)(1)
         if direct == "TO":
@@ -589,8 +601,8 @@ class IntCodeGen:
 
     def case_stmt(self, node):
         ran = str(randint(0, 0x7FFFFFFF))
-        expr = self._codegen(node.children[1])
-        othercase = self._codegen(node.children[3])
+        expr = self.triggerFuncByName(node.children[1])
+        othercase = self.triggerFuncByName(node.children[3])
         default = self.builder.append_basic_block('default_' + ran)
         self.default = default
         case_part = self.builder.switch(expr, default)
@@ -603,17 +615,17 @@ class IntCodeGen:
 
     def case_expr_list(self, node):
         if len(node.children) > 1:
-            return self._codegen(node.children[0]) + [self._codegen(node.children[1])]
+            return self.triggerFuncByName(node.children[0]) + [self.triggerFuncByName(node.children[1])]
         else:
-            return [self._codegen(node.children[0])]
+            return [self.triggerFuncByName(node.children[0])]
 
     def case_expr(self, node):
         ran = str(randint(0, 0x7FFFFFFF))
-        val = self._codegen(node.children[0])
+        val = self.triggerFuncByName(node.children[0])
         block = self.builder.append_basic_block('case_' + ran)
         stored_builder = self.builder
         self.builder = ir.IRBuilder(block)
-        self._codegen(node.children[2])
+        self.triggerFuncByName(node.children[2])
         self.builder = stored_builder
         return val, block
 
@@ -626,11 +638,11 @@ class IntCodeGen:
         w_builder = ir.IRBuilder(whileblock)
         stored = self.builder
         self.builder = w_builder
-        cond = self._codegen(node.children[1])
+        cond = self.triggerFuncByName(node.children[1])
         self.builder.cbranch(cond, stmt, jumpout)
         s_builder = ir.IRBuilder(stmt)
         self.builder = s_builder
-        self._codegen(node.children[3])
+        self.triggerFuncByName(node.children[3])
         self.builder.branch(whileblock)
         self.builder = stored
         self.builder.position_at_end(jumpout)
@@ -662,8 +674,8 @@ class IntCodeGen:
 
     def expr(self, node):
         if len(node.children) > 1:
-            lhs = self._codegen(node.children[0])
-            rhs = self._codegen(node.children[2])
+            lhs = self.triggerFuncByName(node.children[0])
+            rhs = self.triggerFuncByName(node.children[2])
             op = node.children[1].name
             if lhs.type != rhs.type:
                 raise InTypeException(["types not equal %s â‰  %s" % (lhs.type, rhs.type)])
@@ -711,12 +723,12 @@ class IntCodeGen:
             else:
                 raise InTypeException(["None type %s" % (lhs.type)])
         else:
-            return self._codegen(node.children[0])
+            return self.triggerFuncByName(node.children[0])
 
     def term(self, node):
         if len(node.children) > 1:
-            lhs = self._codegen(node.children[0])
-            rhs = self._codegen(node.children[2])
+            lhs = self.triggerFuncByName(node.children[0])
+            rhs = self.triggerFuncByName(node.children[2])
             op = node.children[1].name
             if lhs.type != rhs.type:
                 raise InTypeException(["%s on two different types, %s and %s" % (op, lhs.type, rhs.type)])
@@ -741,11 +753,11 @@ class IntCodeGen:
             else:
                 raise OperationException(["Error Operation %s" % (op)])
         else:
-            return self._codegen(node.children[0])
+            return self.triggerFuncByName(node.children[0])
 
     def factor(self, node):
         if len(node.children) == 1:
-            return self._codegen(node.children[0])
+            return self.triggerFuncByName(node.children[0])
         elif len(node.children) == 3:
             if node.children[1].type == "SYM_DOT":
                 name = node.children[0].name
@@ -757,7 +769,7 @@ class IntCodeGen:
                 pointer_to_index = self.builder.gep(lhs, [i32_0, offset])  # gets address of array[0]
                 return self.builder.load(pointer_to_index)
             else:
-                return self._codegen(node.children[1])
+                return self.triggerFuncByName(node.children[1])
         elif len(node.children) == 4:
             if node.children[1].type == "SYM_LPAREN":
                 args = self.args_list(node.children[2])
@@ -782,7 +794,7 @@ class IntCodeGen:
             pre_list = self.args_list(node.children[0])
         else:
             pre_list = list()
-        current = [self._codegen(node.children[-1])]
+        current = [self.triggerFuncByName(node.children[-1])]
         return pre_list + current
 
     def ID(self, node):
@@ -806,6 +818,6 @@ if __name__ == "__main__":
     data = f.read()
     f.close()
     astroot = parser.parse(data)
-    ir_code_gen = IntCodeGen()
+    ir_code_gen = IntRepGen()
     ir_code_gen.initial(astroot)
     ir_code_gen.Generation()

@@ -1,7 +1,7 @@
 import os
 
 from parse import parser
-from intermediateCodeGenerator import IntCodeGen
+from intermediateRepresentationGenerator import IntRepGen
 import sys
 from PyQt5.QtGui import QImage, QPixmap
 
@@ -23,27 +23,27 @@ class MainForm(QMainWindow, Ui_MainWindow):
         # self.SourceCode = None
         # self.SourceCode.setText("")
         self.AbstractSyntsxTreeRoot = None
-        self.IntermediateCode = IntCodeGen()
+        self.IntermediateRepresentation = IntRepGen()
         self.TargetCode = TargCodeGen()
-        
+
         self.ASMCode = None
 
         self.astroot = None
 
-    def getIntermediateCode(self):
-        src_code = self.SourceCode.toPlainText()
+    def getIntermediateRepresentation(self):
+        src_code = self.SourceCode
         int_code = ""
         if src_code == "":
             self.Open()
             src_code = self.SourceCode.toPlainText()
         else:
             self.AbstractSyntsxTreeRoot = parser.parse(src_code)
-            self.IntermediateCode.initial(self.AbstractSyntsxTreeRoot)
-            int_code = self.IntermediateCode.Generation()
+            self.IntermediateRepresentation.initial(self.AbstractSyntsxTreeRoot)
+            int_code = self.IntermediateRepresentation.Generation()
             self.IR.setText(int_code)
         return int_code
 
-    
+
     def Gen_Tree(self):
         source_code = self.SourceCode.toPlainText()
         if source_code == '':
@@ -61,10 +61,8 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.AST.setPixmap(QPixmap.fromImage(img))
 
     def Compile(self):
-        print("before gen int code")
-        int_code = self.getIntermediateCode()
-        print("int code gened")
-        # print(int_code)
+        int_code = self.getIntermediateRepresentation()
+        print(int_code)
         #TODO: 生成目标代码
         func_name = []
         for func in self.IntermediateCode.FuncList:
@@ -72,7 +70,7 @@ class MainForm(QMainWindow, Ui_MainWindow):
 
         self.TargetCode.getIntCode(int_code)
         asm_code = self.TargetCode.gen_target_code()
-        
+
         #TODO: 写入二进制文件
         self.ASMCode = asm_code
         self.ASM.setText(asm_code)

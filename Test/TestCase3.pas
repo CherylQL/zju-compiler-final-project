@@ -5,6 +5,7 @@ var
 function f(b : integer): integer;
 var
     arr : array [1..10] of integer;
+    i : integer;
 begin
     for i := 1 to 10 do
         arr[i] := i;

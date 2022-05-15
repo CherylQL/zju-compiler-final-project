@@ -12,6 +12,7 @@ from interface import Ui_MainWindow
 from GenTargCode import TargCodeGen
 from visualize import Viz
 
+
 class MainForm(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MainForm, self).__init__(parent)
@@ -23,36 +24,44 @@ class MainForm(QMainWindow, Ui_MainWindow):
         # self.SourceCode = None
         # self.SourceCode.setText("")
         self.AbstractSyntsxTreeRoot = None
-        self.IntermediateRepresentation = IntRepGen()
+        self.IntermediateCode = IntRepGen()
         self.TargetCode = TargCodeGen()
 
         self.ASMCode = None
 
         self.astroot = None
 
-    def getIntermediateRepresentation(self):
-        src_code = self.SourceCode
+    def getIntermediateCode(self):
+        src_code = self.SourceCode.toPlainText()
+
+        # f = open('./Test/TestCase1.pas', 'r', encoding='utf-8')
+        # src_code = f.read()
+        # f.close()
+
         int_code = ""
         if src_code == "":
             self.Open()
             src_code = self.SourceCode.toPlainText()
         else:
             self.AbstractSyntsxTreeRoot = parser.parse(src_code)
-            self.IntermediateRepresentation.initial(self.AbstractSyntsxTreeRoot)
-            int_code = self.IntermediateRepresentation.Generation()
+            self.IntermediateCode.initial(self.AbstractSyntsxTreeRoot)
+            int_code = self.IntermediateCode.Generation()
             self.IR.setText(int_code)
         return int_code
 
-
     def Gen_Tree(self):
         source_code = self.SourceCode.toPlainText()
-        if source_code == '':
+        if source_code == "":
             source_code = self.Open()
-        if self.IR.toPlainText() == '':
+        if self.IR.toPlainText() == "":
             self.astroot = parser.parse(source_code)
+
+        data = source_code
+        self.astroot = parser.parse(data)
         Viz(self.astroot).png()
         filepath = sys.path[0] + '\\ParsingTree.png'
         self.AST_P.setText(filepath)
+        # print(filepath)
 
         img = QImage()
         img.load(filepath)
@@ -61,17 +70,19 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.AST.setPixmap(QPixmap.fromImage(img))
 
     def Compile(self):
-        int_code = self.getIntermediateRepresentation()
-        print(int_code)
-        #TODO: 生成目标代码
+        print("before gen int code")
+        int_code = self.getIntermediateCode()
+        print("int code gened")
+        # print(int_code)
+        # TODO: 生成目标代码
         func_name = []
-        for func in self.IntermediateRepresentation.FuncList:
+        for func in self.IntermediateCode.FuncList:
             func_name.append(func.name)
 
         self.TargetCode.getIntCode(int_code)
         asm_code = self.TargetCode.gen_target_code()
 
-        #TODO: 写入二进制文件
+        # TODO: 写入二进制文件
         self.ASMCode = asm_code
         self.ASM.setText(asm_code)
 
@@ -80,19 +91,23 @@ class MainForm(QMainWindow, Ui_MainWindow):
         print(filepath)
         self.ASM_P.setText(filepath)
 
-        # with open(filepath, 'w') as fout:
-        #     fout.write(asm_code)
+        with open(filepath, 'w') as fout:
+            fout.write(asm_code)
         return asm_code
 
     def Run(self):
-        self.SC_P.setText(self.SC_P.text() + '\Test\TestCase3.pas')
-        print(self.SC_P.text())
-        asm_code = self.Compile()
+        source_code = self.SourceCode.toPlainText()
+        asm_code = self.ASM.toPlainText()
+        if source_code == "":
+            source_code = self.Open()
+            asm_code = self.Compile()
+        if asm_code == "":
+            asm_code = self.Compile()
 
-        #TODO: set program name according to asm file name
+        # set program name according to asm file name
         program_name = self.SC_P.text().split('.')[0]
 
-        #gcc compile
+        # gcc compile
         ret = os.popen("gcc " + program_name + ".s" + " -o " + program_name)
         info = "gcc log:\n" + ret.read() + "\n"
 
@@ -125,15 +140,18 @@ class MainForm(QMainWindow, Ui_MainWindow):
         with open(path, 'w') as fin:
             fin.write(content)
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
+    print("main")
     mainForm = MainForm()
 
-    f = open('./Test/TestCase3.pas', 'r', encoding='utf-8')
-    mainForm.SourceCode = f.read()
-    f.close()
-    mainForm.Run()
+    # f = open('./Test/TestCase3.pas', 'r', encoding='utf-8')
+    # mainForm.SourceCode = f.read()
+    # f.close()
+    # mainForm.Compile()
+    # print(mainForm.ASM)
 
-    # mainForm.show()
-    # sys.exit(app.exec_())
+    mainForm.show()
+    sys.exit(app.exec_())

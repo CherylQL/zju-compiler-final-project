@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>750</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="open">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>open</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="save">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>0</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>save</string>
+    </property>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>-10</x>
+      <y>50</y>
+      <width>1021</width>
+      <height>711</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border::none</string>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="sc">
+     <property name="styleSheet">
+      <string notr="true">	font-family:&quot;微软雅黑&quot;;
+	font-size:14px;</string>
+     </property>
+     <attribute name="title">
+      <string>Source Code</string>
+     </attribute>
+     <widget class="QTextEdit" name="SC">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>1001</width>
+        <height>671</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);
+border-color: rgb(30, 30, 30);
+color: rgb(212, 198, 159);
+font-size:16px;font-family:Consolas;
+border : none;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="SC_P">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1011</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);
+color: rgb(129,129,129);
+font-size:16px;font-family:Consolas;</string>
+      </property>
+      <property name="text">
+       <string>filepath</string>
+      </property>
+      <property name="indent">
+       <number>12</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="sc_bg">
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>0</y>
+        <width>1051</width>
+        <height>731</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <zorder>sc_bg</zorder>
+     <zorder>SC</zorder>
+     <zorder>SC_P</zorder>
+    </widget>
+    <widget class="QWidget" name="ir">
+     <attribute name="title">
+      <string>Intermediate Code</string>
+     </attribute>
+     <widget class="QTextBrowser" name="IR">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>1001</width>
+        <height>671</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);
+color: rgb(212, 198, 159);
+font-size:16px;font-family:Consolas;
+border : none;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>0</y>
+        <width>1031</width>
+        <height>701</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="IR_P">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1021</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);
+color: rgb(129,129,129);
+font-size:16px;font-family:Consolas;</string>
+      </property>
+      <property name="text">
+       <string>filepath</string>
+      </property>
+      <property name="indent">
+       <number>12</number>
+      </property>
+     </widget>
+     <zorder>label</zorder>
+     <zorder>IR</zorder>
+     <zorder>IR_P</zorder>
+    </widget>
+    <widget class="QWidget" name="asm_2">
+     <attribute name="title">
+      <string>Assembly Code</string>
+     </attribute>
+     <widget class="QTextBrowser" name="ASM">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>1001</width>
+        <height>671</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);
+color: rgb(212, 198, 159);
+border: none;
+font-size:16px;font-family:Consolas;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="asm_bg">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1011</width>
+        <height>711</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="ASM_P">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1011</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);
+color: rgb(129,129,129);
+font-size:16px;font-family:Consolas;</string>
+      </property>
+      <property name="text">
+       <string>filepath</string>
+      </property>
+      <property name="indent">
+       <number>12</number>
+      </property>
+     </widget>
+     <zorder>asm_bg</zorder>
+     <zorder>ASM</zorder>
+     <zorder>ASM_P</zorder>
+    </widget>
+    <widget class="QWidget" name="ast">
+     <attribute name="title">
+      <string>AST</string>
+     </attribute>
+     <widget class="QLabel" name="AST_P">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1011</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);
+color: rgb(129,129,129);
+font-size:16px;font-family:Consolas;</string>
+      </property>
+      <property name="text">
+       <string>filepath</string>
+      </property>
+      <property name="indent">
+       <number>12</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="AST">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>1011</width>
+        <height>671</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(30, 30, 30);
+color: rgb(212, 198, 159);
+font-size:32px;font-weight:bold;font-family:Consolas;</string>
+      </property>
+      <property name="text">
+       <string>Please Generate AST</string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::PlainText</enum>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="bg">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1011</width>
+      <height>751</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(37, 37, 37);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="compile">
+    <property name="geometry">
+     <rect>
+      <x>840</x>
+      <y>30</y>
+      <width>30</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/pic/imgs/target.png);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="tree">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>30</y>
+      <width>30</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/pic/imgs/tree.png);
+</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="run">
+    <property name="geometry">
+     <rect>
+      <x>960</x>
+      <y>30</y>
+      <width>30</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/pic/imgs/start.png);
+</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>bg</zorder>
+   <zorder>open</zorder>
+   <zorder>save</zorder>
+   <zorder>tabWidget</zorder>
+   <zorder>compile</zorder>
+   <zorder>tree</zorder>
+   <zorder>run</zorder>
+  </widget>
+ </widget>
+ <resources>
+  <include location="source.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>open</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Open()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>38</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>41</x>
+     <y>-13</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>save</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Save()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>113</x>
+     <y>-12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>compile</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Compile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>858</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>861</x>
+     <y>-20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tree</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Gen_Tree()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>907</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>893</x>
+     <y>-9</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>run</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Run()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>974</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>965</x>
+     <y>-16</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>Open()</slot>
+  <slot>Save()</slot>
+  <slot>Compile()</slot>
+  <slot>Gen_Tree()</slot>
+  <slot>Run()</slot>
+ </slots>
+</ui>

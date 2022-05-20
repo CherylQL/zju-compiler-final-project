@@ -12,7 +12,6 @@ from interface import Ui_MainWindow
 from GenTargCode import TargCodeGen
 from visualize import Viz
 
-
 class MainForm(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MainForm, self).__init__(parent)
@@ -26,14 +25,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
         self.AbstractSyntsxTreeRoot = None
         self.IntermediateCode = IntRepGen()
         self.TargetCode = TargCodeGen()
-
+        
         self.ASMCode = None
 
         self.astroot = None
 
     def getIntermediateCode(self):
         src_code = self.SourceCode.toPlainText()
-
+        
         # f = open('./Test/TestCase1.pas', 'r', encoding='utf-8')
         # src_code = f.read()
         # f.close()
@@ -49,13 +48,14 @@ class MainForm(QMainWindow, Ui_MainWindow):
             self.IR.setText(int_code)
         return int_code
 
+    
     def Gen_Tree(self):
         source_code = self.SourceCode.toPlainText()
         if source_code == "":
             source_code = self.Open()
         if self.IR.toPlainText() == "":
             self.astroot = parser.parse(source_code)
-
+        
         data = source_code
         self.astroot = parser.parse(data)
         Viz(self.astroot).png()
@@ -74,15 +74,15 @@ class MainForm(QMainWindow, Ui_MainWindow):
         int_code = self.getIntermediateCode()
         print("int code gened")
         # print(int_code)
-        # TODO: 生成目标代码
+        #TODO: 生成目标代码
         func_name = []
         for func in self.IntermediateCode.FuncList:
             func_name.append(func.name)
 
         self.TargetCode.getIntCode(int_code)
         asm_code = self.TargetCode.gen_target_code()
-
-        # TODO: 写入二进制文件
+        
+        #TODO: 写入二进制文件
         self.ASMCode = asm_code
         self.ASM.setText(asm_code)
 
@@ -96,24 +96,16 @@ class MainForm(QMainWindow, Ui_MainWindow):
         return asm_code
 
     def Run(self):
-        source_code = self.SourceCode.toPlainText()
-        asm_code = self.ASM.toPlainText()
-        if source_code == "":
-            source_code = self.Open()
-            asm_code = self.Compile()
-        if asm_code == "":
-            asm_code = self.Compile()
-
         # set program name according to asm file name
         program_name = self.SC_P.text().split('.')[0]
 
         # gcc compile
-        ret = os.popen("gcc " + program_name + ".s" + " -o " + program_name)
-        info = "gcc log:\n" + ret.read() + "\n"
+        ret = os.popen("gcc -c " + program_name + ".s" + " -o " + program_name+'.o')
+        ret = os.popen("gcc -o " + program_name + " " + program_name + ".o")
 
         # run
         ret = os.popen(program_name)
-        info += "program result:\n" + ret.read()
+        info = "program result:\n" + ret.read()
 
         # show result?
         QMessageBox.information(self, 'run result', info, buttons=QMessageBox.Ok)
@@ -139,7 +131,6 @@ class MainForm(QMainWindow, Ui_MainWindow):
         content = self.SourceCode.toPlainText()
         with open(path, 'w') as fin:
             fin.write(content)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

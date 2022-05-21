@@ -35,7 +35,7 @@ class IntRepGen:
         self.module = ir.Module(self.AstRoot.children[0].children[1].name)
         self.triggerFuncByName(self.AstRoot)
         ret = self.module.__repr__()
-        #TODO: cfgGraphGenerator检查
+
         self.cfgGraphGenerator()
         return ret
 
@@ -409,7 +409,9 @@ class IntRepGen:
                 raise InTypeException(["Cannot assign %s to %s" % (str(rhs.type), str(pointer_to_index.type)[:-1])])
             self.builder.store(rhs, pointer_to_index)
         elif tp == "SYM_DOT":
-            name = node.children[0].name
+            name = node.children[0].nam
+            
+
             lhs = self.SymbolTable.find(name)['entry']
             rhs = self.expression(node.children[4])
             index = node.children[2].name
@@ -442,7 +444,21 @@ class IntRepGen:
 
     def proc_stmt(self, node):
         if node.children[0].type == 'READ':
-            addr = self.SymbolTable.find(node.children[2].children[0].name)['entry']
+            factor = node.children[2]
+            if len(factor.children) > 1:
+                tp = factor.children[1].type
+                if tp == "SYM_LBRAC":
+                    name = factor.children[0].name
+                    lhs = self.SymbolTable.find(name)['entry']
+                    index = self.expression(factor.children[2])
+                    i32 = ir.IntType(32)
+                    i32_0 = ir.Constant(i32, 0)
+                    addr = self.builder.gep(lhs, [i32_0, index])
+                else:
+                    addr = self.SymbolTable.find(node.children[2].children[0].name)['entry']
+            else:
+                addr = self.SymbolTable.find(node.children[2].children[0].name)['entry']
+
             python_sca = ""
             ran = str(randint(0, 0x7FFFFFFF))
             emptyptr = ir.IntType(8).as_pointer()
@@ -803,7 +819,7 @@ class IntRepGen:
         return
 
 if __name__ == "__main__":
-    f = open('./Test/TestCase3.pas', 'r', encoding='utf-8')
+    f = open('Test/Qsort.pas', 'r', encoding='utf-8')
     data = f.read()
     f.close()
     astroot = parser.parse(data)

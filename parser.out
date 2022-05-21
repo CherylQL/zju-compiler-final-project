@@ -70,7 +70,7 @@ Rule 42    var_decl_list -> var_decl_list var_decl
 Rule 43    var_decl_list -> var_decl
 Rule 44    var_decl -> name_list SYM_COLON type_decl SYM_SEMICOLON
 Rule 45    routine_part -> routine_part func_decl
-Rule 46    routine_part -> routine_part procedure_decl
+Rule 46    routine_part -> routine_part yhuugfprocedure_decl
 Rule 47    routine_part -> func_decl
 Rule 48    routine_part -> procedure_decl
 Rule 49    routine_part -> epsilon

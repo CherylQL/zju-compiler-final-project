@@ -1,5 +1,19 @@
 digraph "CFG for 'main' function" {
 	label="CFG for 'main' function";
 
-	Node0x1f2713da2e0 [shape=record,label="{main:\l  %.2 = call i32 @f(i32 6)\l  store i32 %.2, i32* @x, align 4\l  %.4 = load i32, i32* @x, align 4\l  %.5 = bitcast [11 x i8]* @fmt574449479 to i8*\l  %.6 = call i32 (i8*, ...) @printf(i8* %.5, i32 %.4)\l  ret void\l}"];
+	Node0x1833c12b940 [shape=record,label="{main:\l  %.2 = alloca [101 x i32], align 4\l  %.3 = bitcast [3 x i8]* @sca1302014492 to i8*\l  %.4 = call i32 (i8*, ...) @scanf(i8* %.3, i32* @n)\l  %.5 = load i32, i32* @n, align 4\l  %.6 = alloca i32, align 4\l  %.7 = load i32, i32* @n, align 4\l  store i32 1, i32* %.6, align 4\l  br label %for_1981904006\l}"];
+	Node0x1833c12b940 -> Node0x1833c12bf40;
+	Node0x1833c12bf40 [shape=record,label="{for_1981904006:                                   \l  %.10 = load i32, i32* %.6, align 4\l  %.11 = icmp sgt i32 %.10, %.7\l  br i1 %.11, label %jumpout_1981904006, label %stmt_1981904006\l|{<s0>T|<s1>F}}"];
+	Node0x1833c12bf40:s0 -> Node0x1833c12b460;
+	Node0x1833c12bf40:s1 -> Node0x1833c12b7c0;
+	Node0x1833c12b7c0 [shape=record,label="{stmt_1981904006:                                  \l  %.13 = bitcast [3 x i8]* @sca1528778333 to i8*\l  %.14 = call i32 (i8*, ...) @scanf(i8* %.13, i32* @x)\l  %.15 = load i32, i32* @x, align 4\l  %.16 = load i32, i32* @x, align 4\l  %.17 = load i32, i32* %.6, align 4\l  %.18 = getelementptr [101 x i32], [101 x i32]* %.2, i32 0, i32 %.17\l  store i32 %.16, i32* %.18, align 4\l  %.20 = add i32 %.10, 1\l  store i32 %.20, i32* %.6, align 4\l  br label %for_1981904006\l}"];
+	Node0x1833c12b7c0 -> Node0x1833c12bf40;
+	Node0x1833c12b460 [shape=record,label="{jumpout_1981904006:                               \l  %.23 = load i32, i32* @n, align 4\l  %.24 = load i32, i32* @n, align 4\l  call void @qsort(i32 1, i32 %.24)\l  %.26 = alloca i32, align 4\l  %.27 = load i32, i32* @n, align 4\l  store i32 1, i32* %.26, align 4\l  br label %for_1132452557\l}"];
+	Node0x1833c12b460 -> Node0x1833c12bb20;
+	Node0x1833c12bb20 [shape=record,label="{for_1132452557:                                   \l  %.30 = load i32, i32* %.26, align 4\l  %.31 = icmp sgt i32 %.30, %.27\l  br i1 %.31, label %jumpout_1132452557, label %stmt_1132452557\l|{<s0>T|<s1>F}}"];
+	Node0x1833c12bb20:s0 -> Node0x1833c12c2a0;
+	Node0x1833c12bb20:s1 -> Node0x1833c12bfa0;
+	Node0x1833c12bfa0 [shape=record,label="{stmt_1132452557:                                  \l  %.33 = load i32, i32* %.26, align 4\l  %.34 = getelementptr [101 x i32], [101 x i32]* %.2, i32 0, i32 %.33\l  %.35 = load i32, i32* %.34, align 4\l  %.36 = bitcast [11 x i8]* @fmt12734325 to i8*\l  %.37 = call i32 (i8*, ...) @printf(i8* %.36, i32 %.35)\l  %.38 = add i32 %.30, 1\l  store i32 %.38, i32* %.26, align 4\l  br label %for_1132452557\l}"];
+	Node0x1833c12bfa0 -> Node0x1833c12bb20;
+	Node0x1833c12c2a0 [shape=record,label="{jumpout_1132452557:                               \l  ret void\l}"];
 }

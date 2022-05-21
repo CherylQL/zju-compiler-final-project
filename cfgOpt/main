@@ -1,5 +1,19 @@
 digraph "CFG for 'main' function" {
 	label="CFG for 'main' function";
 
-	Node0x2718e783d00 [shape=record,label="{main:\l  store i32 6, i32* @x, align 4\l  %.6 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1)\l... getelementptr inbounds ([11 x i8], [11 x i8]* @fmt7173912, i64 0, i64 0), i32\l... 6)\l  ret void\l}"];
+	Node0x240d38c5310 [shape=record,label="{main:\l  %.2 = alloca [101 x i32], align 4\l  %.4 = tail call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8],\l... [3 x i8]* @sca1861328492, i64 0, i64 0), i32* nonnull @n)\l  %.7 = load i32, i32* @n, align 4\l  br label %for_189973084\l}"];
+	Node0x240d38c5310 -> Node0x240d38c6150;
+	Node0x240d38c6150 [shape=record,label="{for_189973084:                                    \l  %.6.0 = phi i32 [ 1, %main ], [ %.20, %stmt_189973084 ]\l  %.11 = icmp sgt i32 %.6.0, %.7\l  br i1 %.11, label %jumpout_189973084, label %stmt_189973084\l|{<s0>T|<s1>F}}"];
+	Node0x240d38c6150:s0 -> Node0x240d38c59d0;
+	Node0x240d38c6150:s1 -> Node0x240d38c5970;
+	Node0x240d38c5970 [shape=record,label="{stmt_189973084:                                   \l  %.14 = tail call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8],\l... [3 x i8]* @sca1372460022, i64 0, i64 0), i32* nonnull @x)\l  %.16 = load i32, i32* @x, align 4\l  %0 = sext i32 %.6.0 to i64\l  %.18 = getelementptr [101 x i32], [101 x i32]* %.2, i64 0, i64 %0\l  store i32 %.16, i32* %.18, align 4\l  %.20 = add i32 %.6.0, 1\l  br label %for_189973084\l}"];
+	Node0x240d38c5970 -> Node0x240d38c6150;
+	Node0x240d38c59d0 [shape=record,label="{jumpout_189973084:                                \l  %.27 = load i32, i32* @n, align 4\l  br label %for_336036614\l}"];
+	Node0x240d38c59d0 -> Node0x240d38c5430;
+	Node0x240d38c5430 [shape=record,label="{for_336036614:                                    \l  %storemerge = phi i32 [ 1, %jumpout_189973084 ], [ %.38, %stmt_336036614 ]\l  %.31 = icmp sgt i32 %storemerge, %.27\l  br i1 %.31, label %jumpout_336036614, label %stmt_336036614\l|{<s0>T|<s1>F}}"];
+	Node0x240d38c5430:s0 -> Node0x240d38c5c70;
+	Node0x240d38c5430:s1 -> Node0x240d38c5f70;
+	Node0x240d38c5f70 [shape=record,label="{stmt_336036614:                                   \l  %1 = sext i32 %storemerge to i64\l  %.34 = getelementptr [101 x i32], [101 x i32]* %.2, i64 0, i64 %1\l  %.35 = load i32, i32* %.34, align 4\l  %.37 = tail call i32 (i8*, ...) @printf(i8* nonnull dereferenceable(1)\l... getelementptr inbounds ([11 x i8], [11 x i8]* @fmt578616253, i64 0, i64 0),\l... i32 %.35)\l  %.38 = add i32 %storemerge, 1\l  br label %for_336036614\l}"];
+	Node0x240d38c5f70 -> Node0x240d38c5430;
+	Node0x240d38c5c70 [shape=record,label="{jumpout_336036614:                                \l  ret void\l}"];
 }

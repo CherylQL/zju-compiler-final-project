@@ -242,7 +242,7 @@ class IntRepGen:
             array_list = self.type_decl(node.children[2])
             array_type = ir.ArrayType(array_list[1], int(array_list[2]) + 1)
             for n in node_array:
-                addr = self.builder.alloca(array_type)
+                addr = ir.GlobalVariable(self.module, array_type, n)
                 self.SymbolTable.insert([n, addr])
 
     def name_list(self, node):

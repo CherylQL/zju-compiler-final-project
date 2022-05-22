@@ -409,9 +409,7 @@ class IntRepGen:
                 raise InTypeException(["Cannot assign %s to %s" % (str(rhs.type), str(pointer_to_index.type)[:-1])])
             self.builder.store(rhs, pointer_to_index)
         elif tp == "SYM_DOT":
-            name = node.children[0].nam
-            
-
+            name = node.children[0].name
             lhs = self.SymbolTable.find(name)['entry']
             rhs = self.expression(node.children[4])
             index = node.children[2].name

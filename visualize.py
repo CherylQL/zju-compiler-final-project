@@ -24,13 +24,14 @@ class Viz:
         count += 1
         while len(stack.content) > 0:
             current, last_id = stack.pop()
-            # print(current)
             for child in current.children:
                 stack.append((child, count))
-                if child.name != "":
-                    self.dot.node(str(count), "%s" % (child.name))
+                 if child.name != "":
+                    if child.name == "<>":  # <>会干扰显示（底层用的是html标签）
+                        self.dot.node(str(count), "!=")
+                    else:
+                        self.dot.node(str(count), "%s" % (child.name))
                 else:
-                    # print(child.type)
                     self.dot.node(str(count), child.type)
                 self.dot.edge(str(last_id), str(count))
                 count += 1

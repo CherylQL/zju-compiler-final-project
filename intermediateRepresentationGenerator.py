@@ -490,15 +490,16 @@ class IntRepGen:
             self.builder.call(scanf, [sca_arg, addr])
             self.builder.load(addr)
             return
-        args = self.args_list(node.children[2])
+        
         if node.children[0].name == 'write':
+            args = self.args_list(node.children[2])
             ran = str(randint(0, 0x7FFFFFFF))
             emptyptr = ir.IntType(8).as_pointer()
             printf = self.module.globals.get('printf', None)
             if not printf:
                 printf_ty = ir.FunctionType(ir.IntType(32), [emptyptr], var_arg=True)
                 printf = ir.Function(self.module, printf_ty, name="printf")
-            python_str = "SPL >> "
+            python_str = ""
             for i in args:
                 if i.type.intrinsic_name == 'i32':
                     python_str = python_str + "%d "
@@ -533,6 +534,7 @@ class IntRepGen:
                         python_str = python_str + "%s "
                 python_str = python_str + "\n\0"
             else:
+                args = []
                 python_str = "\n\0"
             fmt_str = ir.Constant(ir.ArrayType(ir.IntType(8), len(python_str)), bytearray(python_str.encode("utf8")))
             global_fmt = ir.GlobalVariable(self.module, fmt_str.type, name='fmt' + ran)

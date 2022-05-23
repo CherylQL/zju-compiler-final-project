@@ -92,8 +92,8 @@ def p_const_value_0(p):
 
 
 def p_const_value_1(p):
-    'const_value : REAL'
-    p[0] = Node("const_value", [Node("REAL", [], p[1])])
+    'const_value : UNSIGNEDREAL'
+    p[0] = Node("const_value", [Node("UNSIGNEDREAL", [], p[1])])
 
 
 def p_const_value_2(p):
@@ -201,9 +201,19 @@ def p_simple_type_decl_6(p):
 
 
 def p_array_type_decl(p):
-    'array_type_decl : ARRAY SYM_LBRAC simple_type_decl SYM_RBRAC OF type_decl'
+    'array_type_decl : ARRAY SYM_LBRAC simple_type_decl array_type_decl_part SYM_RBRAC OF type_decl'
     p[0] = Node("array_type_decl", [Node("ARRAY", [], p[1]), Node(
-        "SYM_LBRAC", [], p[2]), p[3], Node("SYM_RBRAC", [], p[4]), Node("OF", [], p[5]), p[6]])
+        "SYM_LBRAC", [], p[2]), p[3], p[4], Node("SYM_RBRAC", [], p[5]), Node("OF", [], p[6]), p[7]])
+
+
+def p_array_type_decl_part_0(p):
+    'array_type_decl_part : SYM_COMMA simple_type_decl'
+    p[0] = Node("array_type_decl_part", [Node("SYM_COMMA", [], p[1]), p[2]])
+
+
+def p_array_type_decl_part_1(p):
+    'array_type_decl_part : epsilon'
+    p[0] = Node("array_type_decl_part", [p[1]])
 
 
 def p_record_type_decl(p):

@@ -35,7 +35,7 @@ sym = ('SYM_ADD', 'SYM_SUB', 'SYM_MUL', 'SYM_DIV', 'SYM_EQ', 'SYM_LT', 'SYM_GT',
 
 # token
 tokens = list(sym) + list(set(reserved.values())) + [
-        'ID', 'UNSIGNEDINTEGER', 'REAL', 'CHAR', 'STR'
+        'ID', 'UNSIGNEDINTEGER', 'UNSIGNEDREAL', 'CHAR', 'STR'
     ]
 
 t_SYM_ADD = re.escape(r'+')
@@ -70,7 +70,7 @@ def t_ID(t):
 
 # sign = r"'+|-'"
 t_UNSIGNEDINTEGER = r"[0-9]+"
-t_REAL = r'(\d+\.\d+(([Ee])[+-]?\d+)?)|(\d+(([Ee])[-+]?\d+))'
+t_UNSIGNEDREAL = r'(\d+\.\d+(([Ee])[+-]?\d+)?)|(\d+(([Ee])[-+]?\d+))'
 t_CHAR = r'\'.\''
 t_STR = r'\'[^\n][^\n][^\n]*\''
 

@@ -159,13 +159,28 @@ class IntRepGen:
             return ret
 
     def array_type_decl(self, node):
-        nm = node.children[2].children[0].children[0].name
-        if nm != "1":
-            raise InTypeException(["Cannot create array"])
-        else:
-            spl_type = node.children[5].children[0].children[0].name.upper()
-            ret = type_t[spl_type]
-            return ["array", ret, node.children[2].children[2].children[0].name]
+        tp = node.children[2].type
+        if tp == "simple_type_decl":
+            nm = node.children[2].children[0].children[0].name
+            if nm != "1":
+                raise InTypeException(["Cannot create array"])
+            else:
+                spl_type = node.children[5].children[0].children[0].name.upper()
+                ret = type_t[spl_type]
+                return ["array", ret, node.children[2].children[2].children[0].name]
+        elif tp == "array_type_part":
+            nm1 = node.children[2].children[0].children[0].name
+            nm2 = node.children[2].children[4].children[0].name
+            if nm1 != "1" or nm2 != "1":
+                raise InTypeException(["Cannot create array"])
+            else:
+                spl_type = node.children[5].children[0].children[0].name.upper()
+                ret = type_t[spl_type]
+                return ["array-array", ret, node.children[2].children[2].children[0].name, node.children[2].children[6].children[0].name]
+            return
+
+    def arr_type_part(self, node):
+        return
 
     def type_decl_list(self, n):
         for i in range(len(n.children)):
@@ -240,16 +255,27 @@ class IntRepGen:
 
         elif node.children[2].children[0].type == "array_type_decl":
             array_list = self.type_decl(node.children[2])
-            array_type = ir.ArrayType(array_list[1], int(array_list[2]) + 1)
-            for n in node_array:
-                if len(self.SymbolTable.SymTables) <= 1:
-                    addr = ir.GlobalVariable(self.module, array_type, n)
-                    addr.initializer = ir.Constant(array_type, [0 for v in range(int(array_list[2]) + 1)])
-                    # addr1 =  self.builder.alloca(array_type)
-                    # addr.initializer = ir.Constant(array_type, addr1)
-                else :
-                    addr = self.builder.alloca(array_type)
-                self.SymbolTable.insert([n, addr])
+            print(array_list)
+            if array_list[0] == "array":
+                array_type = ir.ArrayType(array_list[1], int(array_list[2]) + 1)
+                for n in node_array:
+                    if len(self.SymbolTable.SymTables) <= 1:
+                        addr = ir.GlobalVariable(self.module, array_type, n)
+                        addr.initializer = ir.Constant(array_type, [0 for v in range(int(array_list[2]) + 1)])
+                        # addr.initializer = ir.Constant(array_type, [0 for v in range(int(array_list[2]) + 1)])
+                    else :
+                        addr = self.builder.alloca(array_type)
+                    self.SymbolTable.insert([n, addr])
+            elif array_list[0] == "array-array":
+                array_col_type = ir.ArrayType(array_list[1], int(array_list[3]) + 1)
+                array_type = ir.ArrayType(array_col_type, int(array_list[2]) + 1)
+                for n in node_array:
+                    if len(self.SymbolTable.SymTables) <= 1:
+                        addr = ir.GlobalVariable(self.module, array_type, n)
+                        addr.initializer = ir.Constant(array_type, [[0 for v in range(int(array_list[3]) + 1)] for x in range(int(array_list[2]) + 1)])
+                    else :
+                        addr = self.builder.alloca(array_type)
+                    self.SymbolTable.insert([n, addr])
 
     def name_list(self, node):
         if len(node.children) <= 1:
@@ -490,16 +516,15 @@ class IntRepGen:
             self.builder.call(scanf, [sca_arg, addr])
             self.builder.load(addr)
             return
-        
+        args = self.args_list(node.children[2])
         if node.children[0].name == 'write':
-            args = self.args_list(node.children[2])
             ran = str(randint(0, 0x7FFFFFFF))
             emptyptr = ir.IntType(8).as_pointer()
             printf = self.module.globals.get('printf', None)
             if not printf:
                 printf_ty = ir.FunctionType(ir.IntType(32), [emptyptr], var_arg=True)
                 printf = ir.Function(self.module, printf_ty, name="printf")
-            python_str = ""
+            python_str = "SPL >> "
             for i in args:
                 if i.type.intrinsic_name == 'i32':
                     python_str = python_str + "%d "

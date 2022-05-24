@@ -617,6 +617,11 @@ def p_expression_5(p):
 def p_expression_6(p):
     'expression : expr'
     p[0] = Node("expression", [p[1]])
+    
+
+def p_expression_7(p):
+    'expression : expression SYM_COMMA expr'
+    p[0] = Node("expression",[p[1], Node("SYM_COMMA", [], p[2]), p[3]])
 
 
 def p_expr_0(p):

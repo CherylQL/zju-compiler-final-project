@@ -200,21 +200,21 @@ def p_simple_type_decl_6(p):
                 Node("SYM_RANGE", [], p[2]), Node("ID", [], p[3])])
 
 
-def p_array_type_decl(p):
-    'array_type_decl : ARRAY SYM_LBRAC simple_type_decl array_type_decl_part SYM_RBRAC OF type_decl'
+
+def p_array_type_decl_0(p):
+    'array_type_decl : ARRAY SYM_LBRAC simple_type_decl SYM_RBRAC OF type_decl'
     p[0] = Node("array_type_decl", [Node("ARRAY", [], p[1]), Node(
-        "SYM_LBRAC", [], p[2]), p[3], p[4], Node("SYM_RBRAC", [], p[5]), Node("OF", [], p[6]), p[7]])
+        "SYM_LBRAC", [], p[2]), p[3], Node("SYM_RBRAC", [], p[4]), Node("OF", [], p[5]), p[6]])
 
 
-def p_array_type_decl_part_0(p):
-    'array_type_decl_part : SYM_COMMA simple_type_decl'
-    p[0] = Node("array_type_decl_part", [Node("SYM_COMMA", [], p[1]), p[2]])
+def p_array_type_decl_1(p):
+    'array_type_decl : ARRAY SYM_LBRAC array_type_decl_part SYM_RBRAC OF type_decl'
+    p[0] = Node("array_type_decl", [Node("ARRAY", [], p[1]), Node(
+        "SYM_LBRAC", [], p[2]), p[3], Node("SYM_RBRAC", [], p[4]), Node("OF", [], p[5]), p[6]])
 
-
-def p_array_type_decl_part_1(p):
-    'array_type_decl_part : epsilon'
-    p[0] = Node("array_type_decl_part", [p[1]])
-
+def p_array_type_decl_part(p):
+    'array_type_decl_part : simple_type_decl SYM_COMMA simple_type_decl'
+    p[0] = Node("array_type_decl_part", [p[1], Node("SYM_COMMA", [], p[2]),  p[3]])
 
 def p_record_type_decl(p):
     'record_type_decl : RECORD field_decl_list END'
@@ -747,7 +747,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 if __name__ == "__main__":
-    f = open('./Test/TestCase1.pas', 'r', encoding='utf-8')
+    f = open('./Test/matrix(1).pas', 'r', encoding='utf-8')
     data = f.read()
     f.close()
     result = parser.parse(data)

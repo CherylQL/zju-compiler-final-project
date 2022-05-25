@@ -35,7 +35,7 @@ class IntRepGen:
         self.module = ir.Module(self.AstRoot.children[0].children[1].name)
         self.triggerFuncByName(self.AstRoot)
         ret = self.module.__repr__()
-
+        print(ret)
         self.cfgGraphGenerator()
         return ret
 
@@ -160,7 +160,7 @@ class IntRepGen:
 
     def array_type_decl(self, node):
         tp = node.children[2].type
-        if tp == "simple_type_decl":
+        if tp == "simple_type_decl" :
             nm = node.children[2].children[0].children[0].name
             if nm != "1":
                 raise InTypeException(["Cannot create array"])
@@ -168,17 +168,17 @@ class IntRepGen:
                 spl_type = node.children[5].children[0].children[0].name.upper()
                 ret = type_t[spl_type]
                 return ["array", ret, node.children[2].children[2].children[0].name]
-        elif tp == "array_type_part":
-            nm1 = node.children[2].children[0].children[0].name
-            nm2 = node.children[2].children[4].children[0].name
+        elif tp == "array_type_decl_part":
+            nm1 = node.children[2].children[0].children[0].children[0].name
+            nm2 = node.children[2].children[2].children[0].children[0].name
             if nm1 != "1" or nm2 != "1":
                 raise InTypeException(["Cannot create array"])
             else:
                 spl_type = node.children[5].children[0].children[0].name.upper()
                 ret = type_t[spl_type]
-                return ["array-array", ret, node.children[2].children[2].children[0].name, node.children[2].children[6].children[0].name]
+                return ["array-array", ret, node.children[2].children[0].children[2].children[0].name,
+                        node.children[2].children[2].children[2].children[0].name]
             return
-
     def arr_type_part(self, node):
         return
 
@@ -255,7 +255,6 @@ class IntRepGen:
 
         elif node.children[2].children[0].type == "array_type_decl":
             array_list = self.type_decl(node.children[2])
-            print(array_list)
             if array_list[0] == "array":
                 array_type = ir.ArrayType(array_list[1], int(array_list[2]) + 1)
                 for n in node_array:
@@ -268,6 +267,7 @@ class IntRepGen:
                     self.SymbolTable.insert([n, addr])
             elif array_list[0] == "array-array":
                 array_col_type = ir.ArrayType(array_list[1], int(array_list[3]) + 1)
+                array_col_value = int(array_list[3])
                 array_type = ir.ArrayType(array_col_type, int(array_list[2]) + 1)
                 for n in node_array:
                     if len(self.SymbolTable.SymTables) <= 1:
@@ -275,6 +275,7 @@ class IntRepGen:
                         addr.initializer = ir.Constant(array_type, [[0 for v in range(int(array_list[3]) + 1)] for x in range(int(array_list[2]) + 1)])
                     else :
                         addr = self.builder.alloca(array_type)
+                    # TODO: new insert function
                     self.SymbolTable.insert([n, addr])
 
     def name_list(self, node):
@@ -433,10 +434,14 @@ class IntRepGen:
             name = node.children[0].name
             lhs = self.SymbolTable.find(name)['entry']
             rhs = self.expression(node.children[5])
-            index = self.expression(node.children[2])
             i32 = ir.IntType(32)
             i32_0 = ir.Constant(i32, 0)
-            pointer_to_index = self.builder.gep(lhs, [i32_0, index])
+            if len(node.children[2].children) > 1:
+                ret = self.expression(node.children[2])
+                pointer_to_index = self.builder.gep(self.builder.gep(lhs, [i32_0, ret[0]]), [i32_0, ret[1]])
+            else:
+                index = self.expression(node.children[2])
+                pointer_to_index = self.builder.gep(lhs, [i32_0, index])
             if str(pointer_to_index.type)[:-1] != str(rhs.type):
                 raise InTypeException(["Cannot assign %s to %s" % (str(rhs.type), str(pointer_to_index.type)[:-1])])
             self.builder.store(rhs, pointer_to_index)
@@ -480,10 +485,27 @@ class IntRepGen:
                 if tp == "SYM_LBRAC":
                     name = factor.children[0].name
                     lhs = self.SymbolTable.find(name)['entry']
-                    index = self.expression(factor.children[2])
-                    i32 = ir.IntType(32)
-                    i32_0 = ir.Constant(i32, 0)
-                    addr = self.builder.gep(lhs, [i32_0, index])
+                    array_part = factor.children[2]
+                    if len(array_part.children) == 3 :
+                        tp1 = array_part.children[1].name
+                        if tp1 == ',':
+                            # i = array_part.children[0].children[0].children[0].children[0].children[0].name
+                            # # 寻找全局变量？ 调用ID
+                            # j = array_part.children[2].children[0].children[0].children[0].name
+                            col_value = 1
+                            # 寻找全局变量
+                            #TODO: index值获取
+                            i = self.expression(array_part.children[0])
+                            j = self.expr(array_part.children[2])
+                            i32 = ir.IntType(32)
+                            i32_0 = ir.Constant(i32, 0)
+                            row_addr = self.builder.gep(lhs, [i32_0, i])
+                            addr = self.builder.gep(row_addr, [i32_0, j])
+                    elif len(array_part.children) == 1:
+                        index = self.expression(factor.children[2])
+                        i32 = ir.IntType(32)
+                        i32_0 = ir.Constant(i32, 0)
+                        addr = self.builder.gep(lhs, [i32_0, index])
                 else:
                     addr = self.SymbolTable.find(node.children[2].children[0].name)['entry']
             else:
@@ -498,7 +520,6 @@ class IntRepGen:
                 scanf = ir.Function(self.module, scanf_ty, name="scanf")
             if addr.type.pointee.intrinsic_name == 'i32':
                 python_sca = python_sca + '%d\0'
-
             elif addr.type.pointee.intrinsic_name == 'i8':
                 python_sca = python_sca + '%c\0'
 
@@ -516,15 +537,15 @@ class IntRepGen:
             self.builder.call(scanf, [sca_arg, addr])
             self.builder.load(addr)
             return
-        args = self.args_list(node.children[2])
         if node.children[0].name == 'write':
+            args = self.args_list(node.children[2])
             ran = str(randint(0, 0x7FFFFFFF))
             emptyptr = ir.IntType(8).as_pointer()
             printf = self.module.globals.get('printf', None)
             if not printf:
                 printf_ty = ir.FunctionType(ir.IntType(32), [emptyptr], var_arg=True)
                 printf = ir.Function(self.module, printf_ty, name="printf")
-            python_str = "SPL >> "
+            python_str = ""
             for i in args:
                 if i.type.intrinsic_name == 'i32':
                     python_str = python_str + "%d "
@@ -692,21 +713,24 @@ class IntRepGen:
             lhs = self.expression(node.children[0])
             rhs = self.expr(node.children[-1])
             op = node.children[1].name
-            if op == "<>":
-                op = "!="
-            elif op == "=":
-                op = "=="
+            if op == ',':
+                return [lhs, rhs]
             else:
-                pass
-            if lhs.type == rhs.type:
-                if lhs.type == ir.IntType(32):
-                    return self.builder.icmp_signed(op, lhs, rhs)
-                elif lhs.type == ir.DoubleType():
-                    return self.builder.fcmp_ordered(op, lhs, rhs)
+                if op == "<>":
+                    op = "!="
+                elif op == "=":
+                    op = "=="
                 else:
-                    raise InTypeException(["None type %s" % (lhs.type)])
-            else:
-                raise InTypeException(["types not equal %s â‰  %s" % (lhs.type, rhs.type)])
+                    pass
+                if lhs.type == rhs.type:
+                    if lhs.type == ir.IntType(32):
+                        return self.builder.icmp_signed(op, lhs, rhs)
+                    elif lhs.type == ir.DoubleType():
+                        return self.builder.fcmp_ordered(op, lhs, rhs)
+                    else:
+                        raise InTypeException(["None type %s" % (lhs.type)])
+                else:
+                    raise InTypeException(["types not equal %s â‰  %s" % (lhs.type, rhs.type)])
         elif len(node.children) == 1:
             return self.expr(node.children[-1])
         else:
@@ -821,6 +845,16 @@ class IntRepGen:
                 ret = self.builder.call(func, args)
                 return ret
             elif node.children[1].type == "SYM_LBRAC":
+                expression = node.children[2]
+                if len(expression.children) == 3 and expression.children[1].name == ',':
+                    lhs = self.expression(expression.children[0])
+                    rhs = self.expr(expression.children[-1])
+                    i32 = ir.IntType(32)
+                    i32_0 = ir.Constant(i32, 0)
+                    head = self.SymbolTable.find(node.children[0].name)["entry"]
+                    row_addr = self.builder.gep(head, [i32_0, lhs])
+                    addr = self.builder.gep(row_addr, [i32_0, rhs])
+                    return self.builder.load(addr)
                 name = node.children[0].name
                 lhs = self.SymbolTable.find(name)['entry']
                 index = self.expression(node.children[2])
@@ -854,7 +888,7 @@ class IntRepGen:
         return
 
 if __name__ == "__main__":
-    f = open('Test/Qsort.pas', 'r', encoding='utf-8')
+    f = open('Test/matrix(1).pas', 'r', encoding='utf-8')
     data = f.read()
     f.close()
     astroot = parser.parse(data)

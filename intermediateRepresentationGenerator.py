@@ -417,6 +417,11 @@ class IntRepGen:
         ret = self.triggerFuncByName(node.children[4])
         return name, arg_array, ret
 
+    def expression_list(self, node):
+        if len(node.children) == 1:
+            self.triggerFuncByName(node.children[0])
+        else:
+            pass
     def assign_stmt(self, node):
         tp = node.children[1].type
         if tp == "SYM_ASSIGN":
@@ -433,7 +438,7 @@ class IntRepGen:
         elif tp == "SYM_LBRAC":
             name = node.children[0].name
             lhs = self.SymbolTable.find(name)['entry']
-            rhs = self.expression(node.children[5])
+            rhs = self.triggerFuncByName(node.children[5])
             i32 = ir.IntType(32)
             i32_0 = ir.Constant(i32, 0)
             if len(node.children[2].children) > 1:
@@ -554,6 +559,10 @@ class IntRepGen:
                     python_str = python_str + "%f "
                 else:
                     python_str = python_str + "%s "
+            if len(node.children) >= 5:
+                expand_len = node.children[4]
+                for i in range(expand_len - 1):
+                    python_str = python_str + " "
             python_str = python_str + "\0"
             fmt_str = ir.Constant(ir.ArrayType(ir.IntType(8), len(python_str)), bytearray(python_str.encode("utf8")))
             global_fmt = ir.GlobalVariable(self.module, fmt_str.type, name='fmt' + ran)

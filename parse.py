@@ -200,7 +200,6 @@ def p_simple_type_decl_6(p):
                 Node("SYM_RANGE", [], p[2]), Node("ID", [], p[3])])
 
 
-
 def p_array_type_decl_0(p):
     'array_type_decl : ARRAY SYM_LBRAC simple_type_decl SYM_RBRAC OF type_decl'
     p[0] = Node("array_type_decl", [Node("ARRAY", [], p[1]), Node(
@@ -212,9 +211,12 @@ def p_array_type_decl_1(p):
     p[0] = Node("array_type_decl", [Node("ARRAY", [], p[1]), Node(
         "SYM_LBRAC", [], p[2]), p[3], Node("SYM_RBRAC", [], p[4]), Node("OF", [], p[5]), p[6]])
 
+
 def p_array_type_decl_part(p):
     'array_type_decl_part : simple_type_decl SYM_COMMA simple_type_decl'
-    p[0] = Node("array_type_decl_part", [p[1], Node("SYM_COMMA", [], p[2]),  p[3]])
+    p[0] = Node("array_type_decl_part", [
+                p[1], Node("SYM_COMMA", [], p[2]),  p[3]])
+
 
 def p_record_type_decl(p):
     'record_type_decl : RECORD field_decl_list END'
@@ -457,7 +459,7 @@ def p_assign_stmt_0(p):
 
 
 def p_assign_stmt_1(p):
-    'assign_stmt : ID SYM_LBRAC expression SYM_RBRAC SYM_ASSIGN expression'
+    'assign_stmt : ID SYM_LBRAC expression_list SYM_RBRAC SYM_ASSIGN expression_list'
     p[0] = Node("assign_stmt", [Node("ID", [], p[1]), Node(
         "SYM_LBRAC", [], p[2]), p[3], Node("SYM_RBRAC", [], p[4]), Node("SYM_ASSIGN", [], p[5]), p[6]])
 
@@ -494,6 +496,12 @@ def p_proc_stmt_4(p):
     'proc_stmt : READ SYM_LPAREN factor SYM_RPAREN'
     p[0] = Node("proc_stmt", [Node("READ", []), Node(
         "SYM_LPAREN", [], p[2]), p[3], Node("SYM_RPAREN", [], p[4])])
+
+
+def p_proc_stmt_5(p):
+    'proc_stmt : SYS_PROC SYM_LPAREN expression_list SYM_RPAREN UNSIGNEDINTEGER'
+    p[0] = Node("proc_stmt", [Node("SYS_PROC", [], p[1]),
+                Node("SYM_LPAREN", [], p[2]), p[3], Node("SYM_RPAREN", [], p[4]), Node("UNSIGNEDINTEGER", [], p[5])])
 
 
 def p_if_stmt(p):
@@ -617,11 +625,11 @@ def p_expression_5(p):
 def p_expression_6(p):
     'expression : expr'
     p[0] = Node("expression", [p[1]])
-    
 
-def p_expression_7(p):
-    'expression : expression SYM_COMMA expr'
-    p[0] = Node("expression",[p[1], Node("SYM_COMMA", [], p[2]), p[3]])
+
+# def p_expression_7(p):
+#     'expression : expression SYM_COMMA expr'
+#     p[0] = Node("expression", [p[1], Node("SYM_COMMA", [], p[2]), p[3]])
 
 
 def p_expr_0(p):
@@ -713,7 +721,7 @@ def p_factor_7(p):
 
 
 def p_factor_8(p):
-    'factor : ID SYM_LBRAC expression SYM_RBRAC'
+    'factor : ID SYM_LBRAC expression_list SYM_RBRAC'
     p[0] = Node("factor", [Node("ID", [], p[1]), Node(
         "SYM_LBRAC", [], p[2]), p[3], Node("SYM_RBRAC", [], p[4])])
 
@@ -747,10 +755,9 @@ def p_error(p):
 parser = yacc.yacc()
 
 if __name__ == "__main__":
-    f = open('./Test/Qsort.pas', 'r', encoding='utf-8')
+    f = open('./Test/matrix(1).pas', 'r', encoding='utf-8')
     data = f.read()
     f.close()
     result = parser.parse(data)
     # print(result)
     Viz(result).png()
-

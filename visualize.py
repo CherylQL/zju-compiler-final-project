@@ -26,7 +26,7 @@ class Viz:
             current, last_id = stack.pop()
             for child in current.children:
                 stack.append((child, count))
-                 if child.name != "":
+                if child.name != "":
                     if child.name == "<>":  # <>会干扰显示（底层用的是html标签）
                         self.dot.node(str(count), "!=")
                     else:

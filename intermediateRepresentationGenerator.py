@@ -35,7 +35,7 @@ class IntRepGen:
         self.module = ir.Module(self.AstRoot.children[0].children[1].name)
         self.triggerFuncByName(self.AstRoot)
         ret = self.module.__repr__()
-        print(ret)
+        # print(ret)
         self.cfgGraphGenerator()
         return ret
 
@@ -419,7 +419,7 @@ class IntRepGen:
 
     def expression_list(self, node):
         if len(node.children) == 1:
-            self.triggerFuncByName(node.children[0])
+            return self.triggerFuncByName(node.children[0])
         else:
             pass
     def assign_stmt(self, node):
@@ -442,11 +442,12 @@ class IntRepGen:
             i32 = ir.IntType(32)
             i32_0 = ir.Constant(i32, 0)
             if len(node.children[2].children) > 1:
-                row = self.expression(node.children[2].children[0])
-                col = self.expr(node.children[2].children[2])
-                pointer_to_index = self.builder.gep(self.builder.gep(lhs, [i32_0, row]), [i32_0, col])
+                row = self.triggerFuncByName(node.children[2].children[0])
+                col = self.triggerFuncByName(node.children[2].children[2])
+                addr1 = self.builder.gep(lhs, [i32_0, row])
+                pointer_to_index = self.builder.gep(addr1, [i32_0, col])
             else:
-                index = self.expression(node.children[2])
+                index = self.triggerFuncByName(node.children[2])
                 pointer_to_index = self.builder.gep(lhs, [i32_0, index])
             if str(pointer_to_index.type)[:-1] != str(rhs.type):
                 raise InTypeException(["Cannot assign %s to %s" % (str(rhs.type), str(pointer_to_index.type)[:-1])])
@@ -895,7 +896,7 @@ class IntRepGen:
         return
 
 if __name__ == "__main__":
-    f = open('Test/matrix(1).pas', 'r', encoding='utf-8')
+    f = open('Test/Qsort.pas', 'r', encoding='utf-8')
     data = f.read()
     f.close()
     astroot = parser.parse(data)

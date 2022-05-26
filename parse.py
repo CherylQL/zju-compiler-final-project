@@ -747,7 +747,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 if __name__ == "__main__":
-    f = open('./Test/matrix(1).pas', 'r', encoding='utf-8')
+    f = open('./Test/Qsort.pas', 'r', encoding='utf-8')
     data = f.read()
     f.close()
     result = parser.parse(data)

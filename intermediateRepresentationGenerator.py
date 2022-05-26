@@ -437,8 +437,9 @@ class IntRepGen:
             i32 = ir.IntType(32)
             i32_0 = ir.Constant(i32, 0)
             if len(node.children[2].children) > 1:
-                ret = self.expression(node.children[2])
-                pointer_to_index = self.builder.gep(self.builder.gep(lhs, [i32_0, ret[0]]), [i32_0, ret[1]])
+                row = self.expression(node.children[2].children[0])
+                col = self.expr(node.children[2].children[2])
+                pointer_to_index = self.builder.gep(self.builder.gep(lhs, [i32_0, row]), [i32_0, col])
             else:
                 index = self.expression(node.children[2])
                 pointer_to_index = self.builder.gep(lhs, [i32_0, index])
@@ -713,24 +714,21 @@ class IntRepGen:
             lhs = self.expression(node.children[0])
             rhs = self.expr(node.children[-1])
             op = node.children[1].name
-            if op == ',':
-                return [lhs, rhs]
+            if op == "<>":
+                op = "!="
+            elif op == "=":
+                op = "=="
             else:
-                if op == "<>":
-                    op = "!="
-                elif op == "=":
-                    op = "=="
+                pass
+            if lhs.type == rhs.type:
+                if lhs.type == ir.IntType(32):
+                    return self.builder.icmp_signed(op, lhs, rhs)
+                elif lhs.type == ir.DoubleType():
+                    return self.builder.fcmp_ordered(op, lhs, rhs)
                 else:
-                    pass
-                if lhs.type == rhs.type:
-                    if lhs.type == ir.IntType(32):
-                        return self.builder.icmp_signed(op, lhs, rhs)
-                    elif lhs.type == ir.DoubleType():
-                        return self.builder.fcmp_ordered(op, lhs, rhs)
-                    else:
-                        raise InTypeException(["None type %s" % (lhs.type)])
-                else:
-                    raise InTypeException(["types not equal %s â‰  %s" % (lhs.type, rhs.type)])
+                    raise InTypeException(["None type %s" % (lhs.type)])
+            else:
+                raise InTypeException(["types not equal %s â‰  %s" % (lhs.type, rhs.type)])
         elif len(node.children) == 1:
             return self.expr(node.children[-1])
         else:

@@ -35,7 +35,6 @@ class IntRepGen:
         self.module = ir.Module(self.AstRoot.children[0].children[1].name)
         self.triggerFuncByName(self.AstRoot)
         ret = self.module.__repr__()
-        # print(ret)
         self.cfgGraphGenerator()
         return ret
 
@@ -553,17 +552,28 @@ class IntRepGen:
                 printf_ty = ir.FunctionType(ir.IntType(32), [emptyptr], var_arg=True)
                 printf = ir.Function(self.module, printf_ty, name="printf")
             python_str = ""
+
             for i in args:
-                if i.type.intrinsic_name == 'i32':
-                    python_str = python_str + "%d "
+                if i.type.intrinsic_name == 'i8':
+                    if len(node.children) >= 5:
+                        expand_len = int(node.children[4].name)
+                        for i in range(expand_len - len(str(i.name))):
+                            python_str = python_str + " "
+                    python_str = python_str + "%c"
+                elif i.type.intrinsic_name == 'i32':
+                    if len(node.children) >= 5:
+                        expand_len = int(node.children[4].name)
+                        for i in range(expand_len - len(str(i.name))):
+                            python_str = python_str + " "
+                    python_str = python_str + "%d"
                 elif i.type.intrinsic_name == 'f64':
-                    python_str = python_str + "%f "
+                    if len(node.children) >= 5:
+                        expand_len = int(node.children[4].name)
+                        for i in range(expand_len - len(str(i.name))):
+                            python_str = python_str + " "
+                    python_str = python_str + "%f"
                 else:
-                    python_str = python_str + "%s "
-            if len(node.children) >= 5:
-                expand_len = node.children[4]
-                for i in range(expand_len - 1):
-                    python_str = python_str + " "
+                    python_str = python_str + "%s"
             python_str = python_str + "\0"
             fmt_str = ir.Constant(ir.ArrayType(ir.IntType(8), len(python_str)), bytearray(python_str.encode("utf8")))
             global_fmt = ir.GlobalVariable(self.module, fmt_str.type, name='fmt' + ran)

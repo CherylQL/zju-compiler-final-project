@@ -1,40 +1,73 @@
-program Matrix;
+program matrix;
 var
-    m1 : integer;
-    n1 : integer;
-    a : [0..100,0..100] of integer;
-    m2 : integer;
-    n2 : integer;
-    b : [0..100,0..100] of integer;
-    i,j,k,s : integer;
-    c : [0..100,0..100] of integer;
+    row1, col1, row2, col2: integer;
+    A, B: array [1..30,1..30] of integer;
+    C: array [1..30,1..30] of integer;
+    i, j, k: integer;
+
 begin
-    read(m1);
-    read(n1);
-    for i:=1 to m1 do
-        for j:=1 to n1 do
-            read(a[i,j]);
-    read(m2);
-    read(n2);
-    for i:=1 to m2 do
-        for j:=1 to n2 do
-            read(b[i,j]);
-
-    if n1=m2 then
+    read(row1);
+    read(col1);
+    for i := 1 to row1  do
     begin
-        for i:=1 to m1 do
-            for j:=1 to n2 do
-            begin 
-                s:=0; 
-                for k:=1 to n1 do 
-                    s:=s+a[i,k]*b[k,j];
-                c[i,j]:=s;
-            end;
-
-        for i:=1 to m1 do
-            for j:=1 to n2 do
-                write(c[i,j]:4);
-            writeln;
+        for j := 1 to col1  do
+            read(A[i,j]);
     end;
-    else writeln('Incompatible Dimensions');
+
+    read(row2);
+    read(col2);
+    for i := 1 to row2  do
+    begin
+        for j := 1 to col2  do
+            read(B[i,j]);        
+    end;
+
+    if col1 <> row2 then
+    begin
+        write('I');
+        write('n');
+        write('c');
+        write('o');
+        write('m');
+        write('p');
+        write('a');
+        write('t');
+        write('i');
+        write('b');
+        write('l');
+        write('e');
+        write(' ');
+        write('D');
+        write('i');
+        write('m');
+        write('e');
+        write('n');
+        write('s');
+        write('i');
+        write('o');
+        write('n');
+        write('s');
+        writeln;
+    end
+    else
+    begin
+        for i := 1 to row1 do
+        begin
+            for j := 1 to col2 do
+                C[i,j] := 0;
+        end;
+        for i := 1 to row1 do
+        begin
+            for j := 1 to col2 do
+                for k := 1 to row2 do
+                    C[i,j] := C[i,j] + A[i,k] * B[k,j];
+        end;
+
+        for i := 1 to row1 do
+        begin
+            for j := 1 to col2 do
+                write(C[i,j]) 10;
+            writeln;
+        end;
+    end;
 end.

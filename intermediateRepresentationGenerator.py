@@ -558,11 +558,11 @@ class IntRepGen:
                 offset = node.children[4].name
             for i in args:
                 if i.type.intrinsic_name == 'i8':
-                    python_str = python_str + "%+" +offset+ "c"
+                    python_str = python_str + "%" +offset+ "c"
                 elif i.type.intrinsic_name == 'i32':
-                    python_str = python_str + "%+" +offset+ "d"
+                    python_str = python_str + "%" +offset+ "d"
                 elif i.type.intrinsic_name == 'f64':
-                    python_str = python_str + "%+" +offset+ "f"
+                    python_str = python_str + "%" +offset+ "f"
                 else:
                     python_str = python_str + "%s"
             python_str = python_str + "\0"
